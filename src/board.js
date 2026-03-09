@@ -129,9 +129,65 @@ function appendChecker(parent, cx, cy, isHuman, label) {
   }
 }
 
+// ── Spike overlay (for highlights) ───────────────────────────────────────────
+
+function drawOverlay(parent, p, color) {
+  const x     = pointLeft(p);
+  const cx    = x + C.PW / 2;
+  const bot   = isBottom(p);
+  const baseY = bot ? C.H - C.FRAME : C.FRAME;
+  const tipY  = bot ? baseY - C.SPIKE_H : baseY + C.SPIKE_H;
+  parent.appendChild(el('polygon', {
+    points: `${x},${baseY} ${x + C.PW},${baseY} ${cx},${tipY}`,
+    fill:   color,
+  }));
+}
+
+// ── Click-target rectangles ───────────────────────────────────────────────────
+
+function drawClickAreas(parent, highlights) {
+  const { W, H, FRAME, BAR, PW, TRAY } = C;
+  const halfW = 6 * PW;
+  const midY  = H / 2;
+  const halfH = midY - FRAME;   // 264 px
+  const { sources, targets } = highlights;
+
+  for (let p = 1; p <= 24; p++) {
+    const bot = isBottom(p);
+    const r   = el('rect', {
+      x: pointLeft(p), y: bot ? midY : FRAME,
+      width: PW, height: halfH,
+      fill: 'transparent', 'data-point': p,
+    });
+    if (sources.has(p) || targets.has(p)) r.style.cursor = 'pointer';
+    parent.appendChild(r);
+  }
+
+  // Bar — human side (bottom half)
+  const barR = el('rect', {
+    x: FRAME + halfW, y: midY, width: BAR, height: halfH,
+    fill: 'transparent', 'data-point': 'bar-human',
+  });
+  if (sources.has('bar')) barR.style.cursor = 'pointer';
+  parent.appendChild(barR);
+
+  // Tray — bearing-off target (bottom half)
+  const trayR = el('rect', {
+    x: W - TRAY, y: midY, width: TRAY, height: halfH,
+    fill: 'transparent', 'data-point': 'tray',
+  });
+  if (targets.has('off')) trayR.style.cursor = 'pointer';
+  parent.appendChild(trayR);
+}
+
 // ── Main render function ──────────────────────────────────────────────────────
 
-function drawBoard(state) {
+function drawBoard(state, highlights = {}) {
+  const { selected = null,
+          sources  = new Set(),
+          targets  = new Set(),
+          hitTargets = new Set() } = highlights;
+
   const svg = document.getElementById('board');
   const { W, H, FRAME, BAR, PW, TRAY, CR } = C;
   const halfW = 6 * PW;     // 372 — width of one six-point half
@@ -180,6 +236,48 @@ function drawBoard(state) {
 
   // ── Spikes ──────────────────────────────────────────────────────────
   for (let p = 1; p <= 24; p++) appendSpike(svg, p);
+
+  // ── Highlights ──────────────────────────────────────────────────────
+  // Faint source indicators (selectable source points)
+  for (const p of sources) {
+    if (typeof p === 'number') drawOverlay(svg, p, 'rgba(200,168,75,0.20)');
+  }
+  // Selected spike or bar
+  if (selected !== null) {
+    if (typeof selected === 'number') {
+      drawOverlay(svg, selected, 'rgba(220,185,0,0.58)');
+    } else if (selected === 'bar') {
+      svg.appendChild(el('rect', {
+        x: FRAME + halfW + 3, y: midY + 3,
+        width: BAR - 6, height: midY - FRAME - 6,
+        fill: 'rgba(220,185,0,0.48)', rx: 3,
+      }));
+    }
+  }
+  // Target overlays
+  for (const t of targets) {
+    if (typeof t === 'number') {
+      drawOverlay(svg, t, hitTargets.has(t)
+        ? 'rgba(240,130,30,0.52)'
+        : 'rgba(50,210,110,0.44)');
+    }
+  }
+  // Bearing-off tray target
+  if (targets.has('off')) {
+    svg.appendChild(el('rect', {
+      x: trayX + 5, y: midY + 3,
+      width: TRAY - 10, height: midY - FRAME - 6,
+      fill: 'rgba(50,210,110,0.38)', rx: 3,
+    }));
+  }
+  // Source bar indicator (faint, when bar has selectable checker)
+  if (sources.has('bar') && selected !== 'bar') {
+    svg.appendChild(el('rect', {
+      x: FRAME + halfW + 3, y: midY + 3,
+      width: BAR - 6, height: midY - FRAME - 6,
+      fill: 'rgba(200,168,75,0.20)', rx: 3,
+    }));
+  }
 
   // ── Point number labels ──────────────────────────────────────────────
   for (let p = 1; p <= 24; p++) {
@@ -250,4 +348,7 @@ function drawBoard(state) {
       fill: C.AI_F, stroke: C.AI_S, 'stroke-width': 1.5,
     }));
   }
+
+  // ── Click areas (transparent, on top for event detection) ───────────
+  drawClickAreas(svg, { sources, targets });
 }
