@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backgammon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=EB+Garamond:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <header id="header">
+      <div id="header-left">
+        <h1>Backgammon</h1>
+      </div>
+      <div id="header-center">
+        <div id="turn-indicator">
+          <span id="turn-text">Your Turn</span>
+        </div>
+      </div>
+      <div id="header-right">
+        <div class="player-info ai-info">
+          <span class="checker-swatch ai"></span>
+          <span class="player-label">Computer</span>
+          <span class="pip-count" id="ai-pips">167</span>
+          <span class="pip-label">pips</span>
+        </div>
+        <div class="player-info human-info">
+          <span class="checker-swatch human"></span>
+          <span class="player-label">You</span>
+          <span class="pip-count" id="human-pips">167</span>
+          <span class="pip-label">pips</span>
+        </div>
+      </div>
+    </header>
+
+    <main id="game-area">
+      <svg id="board" xmlns="http://www.w3.org/2000/svg"></svg>
+    </main>
+
+    <footer id="footer">
+      <button id="new-game-btn" class="btn">New Game</button>
+      <div id="dice-area">
+        <!-- dice rendered here in later phases -->
+      </div>
+      <button id="roll-btn" class="btn btn-primary">Roll Dice</button>
+    </footer>
+
+  </div>
+  <script src="src/board.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>
