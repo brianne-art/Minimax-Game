@@ -213,10 +213,10 @@ function drawBoard(state) {
 
   // ── Bar checkers ─────────────────────────────────────────────────────
   const barCX = FRAME + halfW + BAR / 2;
-  for (let i = 0; i < state.humanBar; i++) {
+  for (let i = 0; i < state.bar.human; i++) {
     appendChecker(svg, barCX, H - FRAME - CR - i * (CR * 2 + 3), true, null);
   }
-  for (let i = 0; i < state.aiBar; i++) {
+  for (let i = 0; i < state.bar.ai; i++) {
     appendChecker(svg, barCX, FRAME + CR + i * (CR * 2 + 3), false, null);
   }
 
@@ -237,14 +237,14 @@ function drawBoard(state) {
   }));
 
   // Human borne-off — stacks upward from bottom edge
-  for (let i = 0; i < state.humanOff; i++) {
+  for (let i = 0; i < state.off.human; i++) {
     svg.appendChild(el('circle', {
       cx: trayCX, cy: H - FRAME - offR - i * offSp, r: offR,
       fill: C.HUMAN_F, stroke: C.HUMAN_S, 'stroke-width': 1.5,
     }));
   }
   // AI borne-off — stacks downward from top edge
-  for (let i = 0; i < state.aiOff; i++) {
+  for (let i = 0; i < state.off.ai; i++) {
     svg.appendChild(el('circle', {
       cx: trayCX, cy: FRAME + offR + i * offSp, r: offR,
       fill: C.AI_F, stroke: C.AI_S, 'stroke-width': 1.5,
