@@ -183,10 +183,12 @@ function drawClickAreas(parent, highlights) {
 // ── Main render function ──────────────────────────────────────────────────────
 
 function drawBoard(state, highlights = {}) {
-  const { selected = null,
-          sources  = new Set(),
-          targets  = new Set(),
-          hitTargets = new Set() } = highlights;
+  const { selected    = null,
+          sources     = new Set(),
+          targets     = new Set(),
+          hitTargets  = new Set(),
+          aiFrom      = new Set(),
+          aiTo        = new Set() } = highlights;
 
   const svg = document.getElementById('board');
   const { W, H, FRAME, BAR, PW, TRAY, CR } = C;
@@ -236,6 +238,15 @@ function drawBoard(state, highlights = {}) {
 
   // ── Spikes ──────────────────────────────────────────────────────────
   for (let p = 1; p <= 24; p++) appendSpike(svg, p);
+
+  // ── AI move highlights ───────────────────────────────────────────────
+  // Drawn under player highlights so they don't interfere with interaction.
+  for (const p of aiFrom) {
+    if (typeof p === 'number') drawOverlay(svg, p, 'rgba(255,150,40,0.32)');
+  }
+  for (const p of aiTo) {
+    if (typeof p === 'number') drawOverlay(svg, p, 'rgba(70,160,255,0.38)');
+  }
 
   // ── Highlights ──────────────────────────────────────────────────────
   // Faint source indicators (selectable source points)

@@ -12,6 +12,34 @@
 <body>
   <div id="app">
 
+    <!-- ── Intro overlay ─────────────────────────────────────────────── -->
+    <div id="intro-overlay" class="overlay">
+      <div class="overlay-box">
+        <h2>Backgammon</h2>
+        <p>Choose your difficulty</p>
+        <div class="difficulty-group">
+          <label>
+            <input type="radio" name="difficulty" value="beginner"> Beginner
+          </label>
+          <label>
+            <input type="radio" name="difficulty" value="medium" checked> Medium
+          </label>
+          <label>
+            <input type="radio" name="difficulty" value="hard"> Hard
+          </label>
+        </div>
+        <button id="play-btn" class="btn btn-primary">Play</button>
+      </div>
+    </div>
+
+    <!-- ── Result overlay ────────────────────────────────────────────── -->
+    <div id="result-overlay" class="overlay hidden">
+      <div class="overlay-box">
+        <p id="result-text"></p>
+        <button id="play-again-btn" class="btn btn-primary">Play Again</button>
+      </div>
+    </div>
+
     <header id="header">
       <div id="header-left">
         <h1>Backgammon</h1>
@@ -53,6 +81,7 @@
   <script src="src/state.js"></script>
   <script src="src/rules.js"></script>
   <script src="src/board.js"></script>
+  <script src="src/ai.js"></script>
   <script src="src/ui.js"></script>
   <script src="src/main.js"></script>
   <script src="src/tests.js"></script>
